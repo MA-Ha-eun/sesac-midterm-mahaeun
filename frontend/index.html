@@ -13,9 +13,15 @@
 </head>
 
 <body >
-
+    <form action="/submit" method="post">
+    <h1>로그인</h1>
+      <label for="email">이메일 주소</label><br>
+      <input type="email" id="email" name="email" placeholder="name@example.com" required><br><br>
+      <label for="password">비밀번호</label><br>
+      <input type="password" id="password" name="password" placeholder="비밀번호" required><br><br>
+      <button type="submit" id="loginBtn">로그인</button><br>
+    </form>
 
     <script type="module" src="js/main.js"></script>
 </body>
-
 </html>

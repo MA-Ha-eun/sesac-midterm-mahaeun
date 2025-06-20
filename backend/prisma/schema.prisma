@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// users
+model users { // 테이블 이름을 Users로 지정 (대부분의 경우 복수형)
+  user_id   Int      @id @default(autoincrement()) @map("userId")
+  email     String   @unique @map("email")
+  password  String   @map("password")
+  username  String   @map("username")
+  phone String?
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  // User와 Post의 1:N 관계 정의: 한 명의 사용자가 여러 개의 게시글을 작성할 수 있습니다.
+  todos     todos[]   // Post 모델과의 관계 필드. 이 User에 연결된 모든 Post 레코드를 배열로 가집니다.
+
+  @@map("users") // 데이터베이스 테이블 이름을 'Users'로 매핑
+}
+
+// todos
+model todos {
+  todo_id    Int      @id @default(autoincrement()) @map("todo_id")
+  user_id    Int      @map("user_id") // 외래 키 (FK): User 모델의 userId를 참조
+  title     String   @map("title")
+  description   String   @map("description") @db.Text
+  is_completed Boolean 
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  deleted_at DateTime @updatedAt @map("deleted_at")
+
+  // Post와 User의 관계 정의: 하나의 게시글은 한 명의 사용자에 의해 작성됩니다.
+  // fields: [userId]는 현재 Post 모델의 userId 필드가 외래 키임을 나타냅니다.
+  // references: [userId]는 Users 모델의 userId 필드를 참조함을 나타냅니다.
+  user      users    @relation(fields: [user_id], references: [user_id])
+
+  @@map("todos") // 데이터베이스 테이블 이름을 'Posts'로 매핑
+
+}
